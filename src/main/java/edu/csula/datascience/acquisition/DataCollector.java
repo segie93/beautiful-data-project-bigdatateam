@@ -5,28 +5,18 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import twitter4j.Status;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * An example of Collector implementation using Twitter4j with MongoDB Java driver
  */
 public class DataCollector implements Collector<Status, Status> {
-    MongoClient mongoClient;
+    /*MongoClient mongoClient;
     MongoDatabase database;
     MongoCollection<Document> collection;
     public DataCollector() {
@@ -37,7 +27,7 @@ public class DataCollector implements Collector<Status, Status> {
 
         // select collection by name `tweets`
         collection = database.getCollection("hw2dataset");
-    }
+    }*/
     
     @Override
     public Collection<Status> mungee(Collection<Status> src) {

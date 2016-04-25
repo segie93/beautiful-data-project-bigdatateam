@@ -1,10 +1,6 @@
 package edu.csula.datascience.acquisition;
 
 import com.google.common.collect.Lists;
-import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
-
-import twitter4j.*;
-import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,11 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
-/**
- * An example of Source implementation using Twitter4j api to grab tweets
- */
+
 public class DataSource implements Source<String> {
     private boolean flag;
     private String[] keys; 
@@ -92,6 +86,7 @@ public class DataSource implements Source<String> {
          return list;
     }
 
+	@SuppressWarnings("unused")
 	private void fixtxtdata(String rEAD_FILE, String wRITE_FILE) {
 		try {
 			FileWriter file = new FileWriter(wRITE_FILE);
@@ -192,9 +187,8 @@ public class DataSource implements Source<String> {
 			map.put(keys[i], values[i]);
 		}
 		JSONObject object = new JSONObject();
-		object.putAll(map);
+		((Map<String, String>) object).putAll(map);
 
 		return object;
 	}
 }
-

@@ -10,5 +10,5 @@ import java.util.Collection;
 public interface Collector<T, R> {
     Collection<T> mungee(Collection<R> src);
 
-    void save(Collection<T> data);
+    void save(Collection<String> data);
 }

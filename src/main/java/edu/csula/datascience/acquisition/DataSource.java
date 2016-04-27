@@ -43,8 +43,9 @@ public class DataSource implements Source<String> {
          
     	 File folder = new File("S:\\Yelp Data");
      	 File[] listOfFiles = folder.listFiles();
+     	 System.out.println("Formatting the files...");
      	 for (int i = 0; i < listOfFiles.length; i++) {
-     		System.out.println(listOfFiles[i].getName().toString());
+     		//System.out.println(listOfFiles[i].getName().toString());
             
      		 if (listOfFiles[i].isFile()) {
          	try {
@@ -161,9 +162,6 @@ public class DataSource implements Source<String> {
 						elements = line.split("\\s+");
 						lineObject = getJson(keys, elements);
 						file.write(lineObject.toString());
-						if (i % 1000000 == 0) {
-							System.out.println((i/1000) + "k records");
-						}
 						i++;
 						line = br.readLine();
 						if (line != null && line.trim() != "") {
@@ -179,16 +177,14 @@ public class DataSource implements Source<String> {
 			}
 	}
 
-	@SuppressWarnings("unchecked")
 	private JSONObject getJson(String[] keys, String[] values) {
 		Map<String, String> map = new HashMap<>();
+		JSONObject object =  new JSONObject();
 		for (int i = 0; i < keys.length; i++) {
+			object.put(keys[i], values[i]);
+		//	map.put(keys[i], values[i]);
 			
-			map.put(keys[i], values[i]);
 		}
-		JSONObject object = new JSONObject();
-		((Map<String, String>) object).putAll(map);
-
 		return object;
 	}
 }

@@ -4,17 +4,16 @@ package edu.csula.datascience.acquisition;
  * A simple model for testing
  */
 public class SimpleModel {
-	 private final String checkin_info;
-	    private final String business_id;
-	    private final String lat;
-	    private final String lon;
-	    private final String countryCode;
-	    private final String categaries;
-	   
-		public SimpleModel(String checkin_info, String business_id,
-				String lat, String lon, String countryCode, String categaries)
+	    private String checkin_info;
+	    private String business_id;
+	    private String lat;
+	    private String lon;
+	    private String countryCode;
+	    private String categaries;
+	    
+		public SimpleModel(String business_id,String lat, String categaries,
+				 String countryCode,String lon,String checkin_info)
 		{
-			
 			this.checkin_info = checkin_info;
 			this.business_id = business_id;
 			this.lat = lat;
@@ -22,6 +21,7 @@ public class SimpleModel {
 			this.countryCode = countryCode;
 			this.categaries = categaries;
 		}
+
 		
 		public String getCheckin_info() {
 			return checkin_info;
@@ -42,4 +42,5 @@ public class SimpleModel {
 		public String getCategaries() {
 			return categaries;
 		}
+		
 }

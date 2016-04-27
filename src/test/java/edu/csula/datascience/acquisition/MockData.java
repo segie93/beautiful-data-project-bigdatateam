@@ -1,28 +1,30 @@
 package edu.csula.datascience.acquisition;
 
+import org.json.simple.JSONObject;
+
 /**
  * Mock raw data
  */
 public class MockData {
-    private final String checkin_info;
-    private final String business_id;
-    private final String lat;
-    private final String lon;
-    private final String countryCode;
-    private final String categaries;
-   
-	public MockData(String checkin_info, String business_id,
-			String lat, String lon, String countryCode, String categaries)
-	{
-		
-		this.checkin_info = checkin_info;
-		this.business_id = business_id;
-		this.lat = lat;
-		this.lon = lon;
-		this.countryCode = countryCode;
-		this.categaries = categaries;
+    private String checkin_info;
+    private String business_id;
+    private String lat;
+    private String lon;
+    private String countryCode;
+    private String categaries;
+    
+    public MockData(JSONObject obj) {
+	
+		this.checkin_info = (String) obj.get("checkin_info");
+		this.business_id = (String) obj.get("business_id");
+		this.lat = (String) obj.get("lat");
+		this.lon = (String) obj.get("lon");
+		this.countryCode = (String) obj.get("countryCode");
+		this.categaries = (String) obj.get("categaries");
 	}
 	
+	
+
 	public String getCheckin_info() {
 		return checkin_info;
 	}
@@ -42,9 +44,5 @@ public class MockData {
 	public String getCategaries() {
 		return categaries;
 	}
-    
-    
-
-
-   
+     
 }

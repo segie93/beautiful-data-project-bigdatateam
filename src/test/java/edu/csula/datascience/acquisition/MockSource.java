@@ -1,99 +1,75 @@
 package edu.csula.datascience.acquisition;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.HashMap;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
 
-/**
- * A mock source to provide data
- */
-public class MockSource implements Source<MockData> {
-	 private boolean flag;
+import com.google.common.collect.Lists;
+
+public class MockSource implements Source<MockData>{
+	
+	boolean flag = true;
+	
+	ArrayList<MockData> list = new ArrayList<MockData>(); 
 
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
 
 	@Override
-    public boolean hasNext() {
-        return flag;
-    }
+	public boolean hasNext() {
+		
+		return flag;
+	}
 
-    @SuppressWarnings("rawtypes")
 	@Override
-    public Collection<MockData> next() {
-    	try {
-			File json = new File(
-			        ClassLoader.getSystemResource("MockData.json").toURI());
-			        
-			        
-			        FileReader fr = new FileReader(json);
-					FileWriter fw = new FileWriter(json.toString().replace("MockData.json", "FormattedMockData.json"));
-					int i=0;
-					Scanner scanner = new Scanner( (Readable) json );
-			            while ( scanner.hasNext() ) {
-			                String line = scanner.nextLine();
-			                if(i==0){
-			                fw.append("{\"test\":["+line);
-			                i++;
-			                }
-			                else{
-			                fw.append("\n"+","+line);
-			                }
-			            }
-			            fw.append("]}");
-			            fw.close();	
-			        
-			    
-			
-			
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
-		}
-    	
-    	
-    	ArrayList<MockData> list = new ArrayList<MockData>();
- 		
-		try {
- 			File readJson = new File(
-			        ClassLoader.getSystemResource("FormattedMockData.json").toURI());
- 			
- 			 JSONParser jsonParser = new JSONParser();
- 			 JSONObject jsonObject;
-			 jsonObject = (JSONObject) jsonParser.parse(new FileReader(readJson));
-			 
- 			 JSONArray lang= (JSONArray) jsonObject.get("test");
- 			 
- 			 Iterator iterator = lang.iterator();
- 			  while (iterator.hasNext()) {
- 			    JSONObject innerObj = (JSONObject) iterator.next();
- 			      	String checkin_info = (String) innerObj.get("checkin_info");
- 			      	String business_id = (String) innerObj.get("business_id");
- 			     	String lat = (String) innerObj.get("lat");
- 			     	String lon = (String) innerObj.get("lon");
- 			     	String countryCode = (String) innerObj.get("countryCode");
- 			     	String categaries = (String) innerObj.get("categaries");
- 			     	
- 			     	list.add(new MockData(checkin_info,business_id,lat,lon,countryCode,categaries));
- 			     	
- 			  }
- 		} catch (ParseException | URISyntaxException | IOException e) {
- 			System.out.println("Parse exception found.");
- 			e.printStackTrace();
- 		}	
-    	
-    	return list;
+	public Collection<MockData> next() {
 
-    }
+		/*String json1 = "{'business_id':'1''lon':'-74.003139','categaries':'Jazz-Club','countryCode':'US','lat':'40.733596','checkin_info': '9-5:1'}";
+		String json2= "{'business_id':'2','lon':'-73.975734','categaries':'Gym','countryCode':'US','lat':'40.758102','checkin_info': '16-2:1'}";
+		String json3= "{'business_id':'3','lon':'-74.003755','categaries':'Indian-Restaurant','countryCode':'US','lat':'40.732456','checkin_info': '5-5:2'}";*/
+		
+		String[] key ={"business_id","lon","categaries","countryCode","lat","checkin_info"}; 
+		String[] value = {"1","-74.003139","Jazz-Club","US","40.733596","9-5:1"};
+		String[] value2 = {"2","-74.003139","Gym","US","40.734396","5-3:4"};
+		String[] value3 = {"3","-74.003139","Indian-Restaurent","US","40.734396","5-3:4"};
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		for(int i=0;i<key.length;i++){
+			map.put(key[i], value[i]);
+		}
+		JSONObject obj = new JSONObject();
+		obj.putAll(map);
+		
+		HashMap<String, String> map2 = new HashMap<String, String>();
+		for(int i=0;i<key.length;i++){
+			map.put(key[i], value2[i]);
+		}
+		JSONObject obj2 = new JSONObject();
+		obj2.putAll(map2);
+		
+		HashMap<String, String> map3 = new HashMap<String, String>();
+		for(int i=0;i<key.length;i++){
+			map.put(key[i], value3[i]);
+		}
+		JSONObject obj3 = new JSONObject();
+		obj3.putAll(map3);
+		
+		
+		
+		list.add(new MockData(obj));
+		list.add(new MockData(obj2));
+		list.add(new MockData(obj3));
+		
+		return list;
+		/*return Lists.newArrayList(
+				(new MockData3(obj)),
+				new MockData3(obj2),
+				new MockData3(obj3));*/
+	}
+
+
 }

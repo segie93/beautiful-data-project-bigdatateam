@@ -4,31 +4,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * A mock implementation of collector for testing
- */
-public class MockCollector implements Collector<SimpleModel, MockData> {
-    @Override
-    public Collection<SimpleModel> mungee(Collection<MockData> src) {
-        // in your example, you might need to check src.hasNext() first
-    	
-    	ArrayList<SimpleModel> list = new ArrayList<SimpleModel>();
+public class MockCollector implements Collector<SimpleModel, MockData>{
+	
+	@Override
+	public Collection<SimpleModel> mungee(Collection<MockData> src) {
+		
+		ArrayList<SimpleModel> list = new ArrayList<SimpleModel>();
+		int i = src.size();
+		
+    	while(src.iterator().hasNext()){
+    		MockData line = src.iterator().next();
+    		list.add(new SimpleModel(line.getBusiness_id(),line.getLat(),line.getCategaries(),
+					line.getCountryCode(),line.getLon(),line.getCheckin_info()));
+    		i--;
+    		if(i==0)
+    			break;
+    	}
+    	return list;
+	}
 
-		for (Iterator<MockData> iterator = src.iterator(); iterator.hasNext();) {
-			MockData line = iterator.next();
-			if(line.getBusiness_id() !=null && line.getCategaries() !=null && line.getCheckin_info() !=null 
-					&& line.getCountryCode() !=null && line.getLat()!=null && line.getLon()!=null){
-				list.add(new SimpleModel(line.getBusiness_id(),line.getCategaries(),line.getCheckin_info(),
-						line.getCountryCode(),line.getLat(),line.getLon()));
-			}
+	@Override
+	public void save(Collection<String> data) {
 
-		}
-    	
-        return list;
+	}
 
-    }
 
-    @Override
-    public void save(Collection<SimpleModel> data) {
-    }
 }

@@ -34,6 +34,9 @@ dependencies {
   compile 'org.mongodb:mongodb-driver:3.2.2'
   compile 'org.twitter4j:twitter4j-core:4.0.4'
   compile 'com.googlecode.json-simple:json-simple:1.1.1'
+  compile 'org.elasticsearch:elasticsearch:2.2.0'
+  compile 'com.google.code.gson:gson:2.6.2'
+  compile 'org.apache.commons:commons-csv:1.2'
 
   testCompile group: 'junit', name: 'junit', version: '4.11'
 }
@@ -54,6 +57,12 @@ task acquireTwitter(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
   main = 'edu.csula.datascience.acquisition.TwitterCollectorApp'
+}
+
+task esHomework(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'edu.csula.datascience.examples.ElasticSearchExample'
 }
 
 task wrapper(type: Wrapper) {

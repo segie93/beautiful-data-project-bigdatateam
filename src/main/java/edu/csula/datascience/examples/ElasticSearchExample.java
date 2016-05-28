@@ -32,23 +32,24 @@ import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
- * A quick elastic search example app
+ * A quick elastic search example to insert data
  *
- * It will parse the csv file from the resource folder under main and send these
+ * It will parse the json file and send these
  * data to elastic search instance running locally
  *
  * After that we will be using elastic search to do full text search
  *
- * gradle command to run this app `gradle esExample`
+ * gradle command to run this app `gradle esHomework`
  */
 
 /*
- PUT /yelp-data
+PUT /yelp-data
  {
     "mappings": {
       "shweet": {
@@ -61,23 +62,30 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
             "type": "string",
             "index": "not_analyzed"
           },
+           "state": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
           "date": {
             "type": "date",
             "format": "strict_date_optional_time||epoch_millis"
           },
-          "full_address": {
-            "type": "string",
-            "index": "not_analyzed"
-          },
-          "state": {
-            "type": "string",
-            "index": "not_analyzed"
-          }
+          "location": {
+          "type": "geo_point"
+        },
+          "day": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "categories": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
         }
       }
     }
-}
- */
+}*/
+
 public class ElasticSearchExample {
     private final static String indexName = "yelp-data";
     private final static String typeName = "shweet";
@@ -147,13 +155,45 @@ public class ElasticSearchExample {
 	    		
 	    		String city = (String) innerObj.get("city");
 	    		
-	    		String state = (String) innerObj.get("state");  
-   	
+	    		String state = (String) innerObj.get("state"); 
+	    		
+	    		double lat = (double) innerObj.get("latitude");
+	    		
+	    		double lon = (double) innerObj.get("longitude");
+	    		
+	    		long review_count = (long) innerObj.get("review_count");
+	    		//System.out.println("--->>"+review_count);
+	    		Double stars = (Double) innerObj.get("stars");
+	    		
+	    		String location = lat+","+lon;
+	    		//System.out.println(location);
 	    		int year = 2016;
-	    		YelpData temp = new YelpData(business_id,full_address,city,state,year);
+	    		
+	    		JSONArray categories = (JSONArray) innerObj.get("categories");
+	    		if(categories.size()>0){
+	    			for(int k=0;k<categories.size();k++){
+	    		    String cat = categories.get(k).toString();
+	    		    YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
+		    				review_count,stars,cat);
+	    		    //System.out.println(gson.toJson(temp));
+	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
+	                 .source(gson.toJson(temp)) 
+	                 );
+	    			} 
+	    		}
+	    		else{
+	    			YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
+		    				review_count,stars,"");
+	    			//System.out.println(gson.toJson(temp));
+	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
+	                 .source(gson.toJson(temp)) 
+	                 );
+	    		}
+	    		/*YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
+	    				review_count,stars);
 	    		 bulkProcessor.add(new IndexRequest(indexName, typeName)
                  .source(gson.toJson(temp))
-             );
+             );*/
 	    		 
    			  }
    			  System.out.println("Done!!!!");
@@ -165,44 +205,63 @@ public class ElasticSearchExample {
 	    	} catch (ParseException e) {
 	    		e.printStackTrace();
 	    	}
-	    	
         
-      
-
         
-/*        try {
-            // after reading the csv file, we will use CSVParser to parse through
-            // the csv files
-            CSVParser parser = CSVParser.parse(
-                csv,
-                Charset.defaultCharset(),
-                CSVFormat.EXCEL.withHeader()
-            );
+        try {
+        	
+    		JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader("S:\\formated-data\\formatted-yelp_academic_dataset_checkin.json"));;
+    		JSONArray jsonarray = (JSONArray)jsonObject.get("test");
+    		
+			 //System.out.println(jsonarray);
+			 
+			 Iterator i = jsonarray.iterator();
+			 int year = 2016;
+			 while (i.hasNext()) {
+				
+				 JSONObject innerObj = (JSONObject) i.next();
 
-            // for each record, we will insert data into Elastic Search
-            parser.forEach(record -> {
-                // cleaning up dirty data which doesn't have time or temperature
-                if (
-                    !record.get("dt").isEmpty() &&
-                    !record.get("AverageTemperature").isEmpty()
-                ) {
-                    Temperature temp = new Temperature(
-                        record.get("dt"),
-                        Double.valueOf(record.get("AverageTemperature")),
-                        record.get("State"),
-                        record.get("Country")
-                    );
-
-                    bulkProcessor.add(new IndexRequest(indexName, typeName)
-                        .source(gson.toJson(temp))
-                    );
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-
+			     String business_id = (String) innerObj.get("business_id");
+    		
+			     JSONObject checkin_info = (JSONObject) innerObj.get("checkin_info");
+			     
+			 for(Iterator iterator = checkin_info.keySet().iterator(); iterator.hasNext();) {
+			     String key = (String) iterator.next();
+			     String[] ck = key.split("-");
+			     String day = getDay(ck[1]);
+			     Long checkin_count = (Long)checkin_info.get(key);
+			
+    		YelpData temp = new YelpData(business_id,year,day,Integer.parseInt(ck[0].toString()),checkin_count);
+    		//System.out.println("---"+gson.toJson(temp));
+    		 bulkProcessor.add(new IndexRequest(indexName, typeName)
+             .source(gson.toJson(temp))
+    		);
+			 }
+			  }
+			  System.out.println("Done!!!!");
+    		 
+    	} catch (FileNotFoundException e) {
+    		e.printStackTrace();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	} catch (ParseException e) {
+    		e.printStackTrace();
+    	}
+        
+        
+    }
+        		
+    public static String getDay(String key){
+    	HashMap<Integer, String> days = new HashMap<Integer, String>();
+    	days.put(0, "Sunday");
+    	days.put(1, "Monday");
+    	days.put(2, "Tusday");
+    	days.put(3, "Wednesday");
+    	days.put(4, "Thursday");
+    	days.put(5, "Friday");
+    	days.put(6, "Saturday");
+    	
+    	
+    	return days.get(Integer.parseInt(key));
     }
 
     static class YelpData {
@@ -211,14 +270,52 @@ public class ElasticSearchExample {
         String city;
         String state;
         Integer date;
+        String location;
+        Long review_count;
+        Double stars; 
+        String categories;
 
-        public YelpData(String business_id, String full_address, String city, String state, Integer date) {
+        public YelpData(String business_id, String full_address, String city, String state, Integer date,
+        		String location,Long review_count,Double stars,String categories) {
             this.business_id = business_id;
             this.full_address = full_address;
             this.city = city;
             this.state = state;
             this.date = date;
+            this.location=location;
+            this.review_count=review_count;
+            this.stars=stars;
+            this.categories=categories;
         }
+        
+        Integer time;
+        String day;
+        Long checkin_count;
+        
+        public YelpData(String business_id,Integer date,String day,Integer time,Long checkin_count) {
+            this.business_id = business_id;
+            this.date=date;
+            this.day=day;
+            this.time=time;
+            this.checkin_count=checkin_count;
+     
+        }
+        
+
+		public Long getReview_count() {
+			return review_count;
+		}
+
+
+		public String getLocation() {
+			return location;
+		}
+
+
+		public Double getStars() {
+			return stars;
+		}
+
 
 		public String getBusiness_id() {
 			return business_id;

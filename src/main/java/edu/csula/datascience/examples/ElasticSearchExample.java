@@ -62,17 +62,10 @@ PUT /yelp-data
             "type": "string",
             "index": "not_analyzed"
           },
-           "state": {
-            "type": "string",
-            "index": "not_analyzed"
-          },
           "date": {
             "type": "date",
             "format": "strict_date_optional_time||epoch_millis"
           },
-          "location": {
-          "type": "geo_point"
-        },
           "day": {
           "type": "string",
           "index": "not_analyzed"
@@ -137,6 +130,9 @@ public class ElasticSearchExample {
 
         JSONParser jsonParser = new JSONParser();
 
+        HashMap<String, String> cities = new HashMap<String, String>();
+        HashMap<String, String> cat = new HashMap<String, String>();
+        
         try {
 	
 	    		JSONObject jsonObject = (JSONObject) jsonParser.parse(new FileReader("S:\\formated-data\\formatted-yelp_academic_dataset_business.json"));;
@@ -151,11 +147,12 @@ public class ElasticSearchExample {
 
    			    String business_id = (String) innerObj.get("business_id");
 	    		
-	    		String full_address = (String) innerObj.get("full_address");
+	    		//String full_address = (String) innerObj.get("full_address");
 	    		
 	    		String city = (String) innerObj.get("city");
 	    		
-	    		String state = (String) innerObj.get("state"); 
+	    		cities.put(business_id, city);
+	    		/*String state = (String) innerObj.get("state"); 
 	    		
 	    		double lat = (double) innerObj.get("latitude");
 	    		
@@ -167,34 +164,38 @@ public class ElasticSearchExample {
 	    		
 	    		String location = lat+","+lon;
 	    		//System.out.println(location);
-	    		int year = 2016;
+	    		int year = 2016;*/
 	    		
 	    		JSONArray categories = (JSONArray) innerObj.get("categories");
+	    		String catt ="";
 	    		if(categories.size()>0){
-	    			for(int k=0;k<categories.size();k++){
-	    		    String cat = categories.get(k).toString();
+	    			catt = categories.get(categories.size()-1).toString();
+	    			/*for(int k=0;k<categories.size();k++){
+	    		    
+	    		    catt += categories.get(k).toString();
 	    		    YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
 		    				review_count,stars,cat);
 	    		    //System.out.println(gson.toJson(temp));
 	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
 	                 .source(gson.toJson(temp)) 
 	                 );
-	    			} 
+	    			} */
 	    		}
 	    		else{
-	    			YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
+	    			/*YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
 		    				review_count,stars,"");
 	    			//System.out.println(gson.toJson(temp));
 	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
 	                 .source(gson.toJson(temp)) 
-	                 );
+	                 );*/
 	    		}
 	    		/*YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
 	    				review_count,stars);
 	    		 bulkProcessor.add(new IndexRequest(indexName, typeName)
                  .source(gson.toJson(temp))
              );*/
-	    		 
+	    		 //System.out.println(catt+"--------------------------------------");
+	    		cat.put(business_id, catt);
    			  }
    			  System.out.println("Done!!!!");
 	    		 
@@ -229,8 +230,12 @@ public class ElasticSearchExample {
 			     String[] ck = key.split("-");
 			     String day = getDay(ck[1]);
 			     Long checkin_count = (Long)checkin_info.get(key);
+			     
+			     String city = cities.get(business_id);
+			     String categories = cat.get(business_id);
 			
-    		YelpData temp = new YelpData(business_id,year,day,Integer.parseInt(ck[0].toString()),checkin_count);
+    		YelpData temp = new YelpData(business_id,year,day,Integer.parseInt(ck[0].toString()),
+    				checkin_count,city,categories);
     		//System.out.println("---"+gson.toJson(temp));
     		 bulkProcessor.add(new IndexRequest(indexName, typeName)
              .source(gson.toJson(temp))
@@ -292,12 +297,15 @@ public class ElasticSearchExample {
         String day;
         Long checkin_count;
         
-        public YelpData(String business_id,Integer date,String day,Integer time,Long checkin_count) {
+        public YelpData(String business_id,Integer date,String day,Integer time,Long checkin_count,
+        		String city,String categories) {
             this.business_id = business_id;
             this.date=date;
             this.day=day;
             this.time=time;
             this.checkin_count=checkin_count;
+            this.city=city;
+            this.categories=categories;
      
         }
         

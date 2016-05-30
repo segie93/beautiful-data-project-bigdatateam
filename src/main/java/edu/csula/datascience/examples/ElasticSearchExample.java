@@ -169,32 +169,16 @@ public class ElasticSearchExample {
 	    		JSONArray categories = (JSONArray) innerObj.get("categories");
 	    		String catt ="";
 	    		if(categories.size()>0){
-	    			catt = categories.get(categories.size()-1).toString();
-	    			/*for(int k=0;k<categories.size();k++){
-	    		    
-	    		    catt += categories.get(k).toString();
-	    		    YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
-		    				review_count,stars,cat);
-	    		    //System.out.println(gson.toJson(temp));
-	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
-	                 .source(gson.toJson(temp)) 
-	                 );
-	    			} */
+	    			//catt = categories.get(categories.size()-1).toString();
+	    			
+	    			for(int k=0;k<categories.size();k++){
+	    		    catt += categories.get(k).toString().trim()+" ";
+	    			}
 	    		}
 	    		else{
-	    			/*YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
-		    				review_count,stars,"");
-	    			//System.out.println(gson.toJson(temp));
-	    		    bulkProcessor.add(new IndexRequest(indexName, typeName)
-	                 .source(gson.toJson(temp)) 
-	                 );*/
+	    			catt="";
 	    		}
-	    		/*YelpData temp = new YelpData(business_id,full_address,city,state,year,location,
-	    				review_count,stars);
-	    		 bulkProcessor.add(new IndexRequest(indexName, typeName)
-                 .source(gson.toJson(temp))
-             );*/
-	    		 //System.out.println(catt+"--------------------------------------");
+	    		//System.out.println("---->>>>"+catt);
 	    		cat.put(business_id, catt);
    			  }
    			  System.out.println("Done!!!!");

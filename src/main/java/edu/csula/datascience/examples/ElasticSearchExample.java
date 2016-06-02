@@ -152,28 +152,14 @@ public class ElasticSearchExample {
 	    		String city = (String) innerObj.get("city");
 	    		
 	    		cities.put(business_id, city);
-	    		/*String state = (String) innerObj.get("state"); 
-	    		
-	    		double lat = (double) innerObj.get("latitude");
-	    		
-	    		double lon = (double) innerObj.get("longitude");
-	    		
-	    		long review_count = (long) innerObj.get("review_count");
-	    		//System.out.println("--->>"+review_count);
-	    		Double stars = (Double) innerObj.get("stars");
-	    		
-	    		String location = lat+","+lon;
-	    		//System.out.println(location);
-	    		int year = 2016;*/
 	    		
 	    		JSONArray categories = (JSONArray) innerObj.get("categories");
 	    		String catt ="";
 	    		if(categories.size()>0){
-	    			//catt = categories.get(categories.size()-1).toString();
-	    			
-	    			for(int k=0;k<categories.size();k++){
+	    			catt = categories.get(categories.size()-1).toString().trim();
+	    			/*for(int k=0;k<categories.size();k++){
 	    		    catt += categories.get(k).toString().trim()+" ";
-	    			}
+	    			}*/
 	    		}
 	    		else{
 	    			catt="";
